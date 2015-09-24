@@ -1,4 +1,5 @@
 /// <reference path="../typings/tsd.d.ts" />
+import {Observable, Subject } from 'rx';
 
 var m = <MithrilStatic>require('mithril');
 
@@ -67,6 +68,34 @@ export function Option(option:iOption){
 	return m("option", { style : "" , value: option.value }, option.text );
 }
 
-export function Selector(...options:iOption[]){
-	return m('select', { style:"margin: 10px" }, options.map(o=> Option(o)))
+export class Selector {
+	
+	onChange = new Subject<iOption>();
+
+	
+	constructor( id: string, options: iOption[]) 
+	{		
+		
+		var repeat= ()=>{
+			
+			var selector = <any>document.getElementById(id) ; 
+		
+			this.onChange.onNext(options[selector.selectedIndex]);
+		} 
+		
+		this.render = ()=>{
+			
+			return m('select', { 
+					style: "margin: 10px",
+					id: id, 
+					onchange: ()=> repeat(), 
+				}
+				, options.map(o=> Option(o)));
+		}
+	}
+	
+	
+	render():MithrilVirtualElement{
+		return null;
+	}
 }

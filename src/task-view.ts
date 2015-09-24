@@ -5,6 +5,8 @@ import {iAccount, iTask } from './entities';
 import { Div, Link, Button, NumberInput, DateInput,TimeInput, TextInput, Span, Selector, Option} from './tags';
 
 import { AccountController } from './account-controller';
+
+import { Observable as O } from 'rx';
  
 var accountController = new AccountController();
 
@@ -31,16 +33,21 @@ class TaskViewModel{
 export function TaskView(task:iTask){
 	
 	var vm = new TaskViewModel(task);
-	
-	var accountSelector = Selector( ...accountController
-			.accounts
-			.map(account=> {
+			
+	var accountSelector = new Selector("account-selector", accountController.accounts.map(account=> {
 				return { 
 					value: account.id, 
 					text: account.name, 
 					selected: account.id === task.account.id }
 			}));
 			
+	accountSelector.onChange.subscribe(account=>{
+		
+		task.account = accountController.accounts.filter(a=> a.id === account.value )[0];
+		
+		alert(JSON.stringify(task));
+	});
+	
 	return Div(
 		
 		DateInput({  value: task.date  }),
@@ -49,7 +56,7 @@ export function TaskView(task:iTask){
 		
 		TimeInput({  value: task.end }),
 		
-		accountSelector,
+		accountSelector.render(),
 		
 		TextInput ({value: task.description }), 
 						 
