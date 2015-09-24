@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "target": "ES5"
+    },
+    "exclude": [
+        "node_modules","built","build","bower_components","tools",".module-cache"
+    ]
+}
