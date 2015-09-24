@@ -26,7 +26,7 @@ interface MithrilStatic {
 	sync<T>(promises: MithrilPromise<T>[]): MithrilPromise<T>;
 	startComputation(): void;
 	endComputation(): void;
-	//
+	//MyMiThrill
 	mount(rootElement: Node, module: MithrilModule): void;
 }
 
@@ -45,8 +45,21 @@ interface MithrilModule {
     controller: Function;
     view: (controller?: any) => MithrilVirtualElement;
 }
-//
-
+// //MyMiThrill
+// interface MithrilController<T>{
+// 	();
+// }
+// //MyMiThrill
+// interface MithrilVirtualElementOf<T> extends MithrilVirtualElement{
+// 	
+// }
+// //MyMiThrill
+// interface MithrilModuleOf<T> extends MithrilModule{
+// 	
+// 	controller: MithrilController<T>;
+// 	
+// 	view: ()=> MithrilVirtualElementOf<T>
+// }
 
 interface MithrilDeferred<T> {
     resolve(value?: T): void;

@@ -1,57 +1,42 @@
 
 var m = <MithrilStatic>require('mithril');
+import {iAccount,iTask } from './entities' ; 
+import { Div, Link, Button, NumberInput, DateInput,TimeInput, TextInput, Span} from './tags';
+import { TaskController} from './task-controller' ; 
+import {TaskView } from './task-view' ; 
 
-import { Div, Link, Button } from './tags';
-
-interface iLink {
-	url: string;
-	title: string;
-}
-
-var Page = {
-	list: function() {
-		return m.request({ method: "GET", url: "data/pages.json" });
-	}
-};
-
-class Controller 
-{
-	page: iLink;
-	
-	pages: iLink[];
-
-	constructor() {
+class AppModule implements MithrilModule {	
+			
+	constructor(){
 		
-		this.list().then(p=> this.pages = p);
+		var controller = new TaskController();
 		
-		this.rotate = () => {
-			this.pages.push(this.pages.shift());
-		};
-	}
+		this.controller = ()=>  controller; 
+		
+		this.view = (ctrl)=> {
+			
+		var tasks = ctrl._tasks.map(task => TaskView(task));
+		
+		return Div(
 
-	list(): MithrilPromise<iLink[]> {
-		return m.request({ method: "GET", url: "data/pages.json" });
-	}
+			Div(...tasks),
 
-	rotate: () => void;
+			NumberInput({ value: ctrl._task }),
+
+			DateInput({ value: '1969-11-11' }),
+
+			Button({ content: "Rotate links", click: ctrl.rotate })
+			
+			);
+		}
+	}
+		
+	controller: Function  ;
+
+	view(ctrl:TaskController) { return null; }
 }
-
-var controller = new Controller();
-
-var module = {
-
-	controller: () => controller,
-
-	view: ctrl => Div(
-
-		Div(ctrl.pages.map(page => Link({ href: "#", content: page.title }))),
-
-		Button({ content: "Rotate links", click: ctrl.rotate })
-	)
-
-};
 
 //initialize
-m.mount(document.body, module);
+m.mount(document.body, new AppModule() );
 
 
