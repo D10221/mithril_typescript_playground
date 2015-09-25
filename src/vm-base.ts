@@ -1,6 +1,6 @@
 
 export interface iViewModel<T>{
-    getValue<TR>(func:(x:T)=> TR):Val<TR>;
+    withValue<TR>(func:(x:T)=> TR):Val<TR>;
     value: <TR>(func:(x:T)=> TR) =>  TR;
     Action(action:(T)=> void):void;
 }
@@ -21,20 +21,20 @@ export class V {
 
         value: ()=> x ,
 
-        with : function<TR>(convert:(v:T)=> TR) { 
+        withValue : function<TR>(convert:(v:T)=> TR) {
             return V.create( isEmpty(x) ? null : convert(x))
         }
 
        ,orElse: (v:T)=> isEmpty(x) ? v : x  
     }
-};
+}
 
 }
 
 export interface Val<T>{
      isValid() : boolean;
      value(): T ;
-     with<TR>(convert:(t:T) => TR ): Val<TR> ;
+     withValue<TR>(convert:(t:T) => TR ): Val<TR> ;
      orElse: (x:T)=> T;
 }
 
@@ -50,7 +50,7 @@ export class VmBase<T> implements iViewModel<T>{
         this._target = target;
     }
 
-    getValue: <TR>(func:(x:T)=> TR) =>  Val<TR> = (func) => {
+    withValue: <TR>(func:(x:T)=> TR) =>  Val<TR> = (func) => {
         return V.create( isEmpty(this._target)? null  : func(this._target));
     };
 

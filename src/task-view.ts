@@ -8,12 +8,23 @@ import AccountSelector from './account-selector';
 
 import { iViewModel, Val, V } from './vm-base';
 
-
+import {Observable,IObservable} from "rx";
 
 export function TaskView(task:iViewModel<iTask>){
 	
-	var desc=  task.getValue(x=> x.account ).with(x=> x.description).orElse("?");
-	
+	var desc=  task.withValue(x=> x.account ).withValue(x=> x.description).orElse("?");
+
+	var accountSelector = AccountSelector(task);
+
+	var accountchanged = accountSelector
+        .selectionChanged
+        .subscribe(account=> {
+		task.Action( x => x.account = account);
+	});
+
+    accountSelector.unloaded.subscribe(e=> accountchanged.dispose());
+
+	//task.Action( x => x.account = accountController.byId(option.value))
 	return Div(
 		
 		DateInput({  value: task.value(x=>x.date)  }),
@@ -22,13 +33,13 @@ export function TaskView(task:iViewModel<iTask>){
 		
 		TimeInput({  value: task.value(x=>x.end) }),
 
-        AccountSelector(task),
+		accountSelector.vElement,
 
         TextInput({ value: desc, readonly: true}),
 		
 		TextInput ({value: task.value(x=>x.description) }),
 						 
-		Link({ href: `#/tasks/task/${task.getValue(x=>x.id)}`, content: task.getValue(x=>x.title) })
+		Link({ href: `#/tasks/task/${task.withValue(x=>x.id)}`, content: task.withValue(x=>x.title) })
 	)
 }
 

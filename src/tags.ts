@@ -1,5 +1,7 @@
 /// <reference path="../typings/tsd.d.ts" />
+
 import {Observable, Subject } from 'rx';
+import * as _ from 'lodash';
 
 var m = <MithrilStatic>require('mithril');
 
@@ -22,7 +24,7 @@ export function Button(options:iButtonOptions): MithrilVirtualElement {
 }
 
 export function Div(...content:MithrilVirtualElement[]): MithrilVirtualElement {
-	return m('div', { style: "margin: 10px" }, content)
+	return m('div', {  }, content)
 }
 enum InputTypes{
 	number, text, date, time, datetime
@@ -56,7 +58,7 @@ export function Input(options:iInputOptions){
 }
 
 export function Span(options){
-	return m('span',{style: "margin: 10px"}, options.content);
+	return m('span',{}, options.content);
 }
 
 export interface iOption {
@@ -67,33 +69,59 @@ export interface iOption {
 }
 
 export function Option(option:iOption){
-	return m("option", { style : "" , value: option.value }, option.text );
+
+    var configure = function(element, isInit, context){
+        if(option.selected === true){
+            element.selected = true;
+        }
+    };
+
+	return m("option", {  value: option.value, config: configure  }, option.text );
 }
 
 export class Selector {
 	
 	onChange = new Subject<iOption>();
 
+    unLoaded = new Subject<boolean>();
+
 	render():MithrilVirtualElement{	return null;}
 
-	constructor( id: string, options: iOption[]) 
-	{		
-		
-		var repeat= ()=>{
-			
-			var selector = <any>document.getElementById(id) ; 
-		
-			this.onChange.onNext(options[selector.selectedIndex]);
-		} 
-		
+	constructor( options: iOption[],id?: string)
+	{
+        var e;
+
+		var configure = function(element, isInit:boolean, context){
+
+            e = element;
+
+            e.onunload = ()=> {
+                this.onChange.completed();
+                this.onChange.dispose();
+                this.unLoaded.onNext(true);
+                this.unLoaded.completed();
+                this.unLoaded.dispose();
+            };
+
+            if(typeof found === 'undefined') {
+                e.selectedIndex = -1;
+            }
+            //alert("configure isInit:" + isInit);
+        };
+
+        var found  = _.find(options, o => o.selected === true);
+
+		var elements = options.map(o=> Option(o));
+
 		this.render = ()=>{
 			
-			return m('select', { 
-					style: "margin: 10px",
-					id: id, 
-					onchange: ()=> repeat(), 
+			return m('select', {
+					id: id,
+                    //selectedIndex: selectedIndex,
+                    config: configure,
+					onchange: ()=> this.onChange.onNext(options[e.selectedIndex]),
 				}
-				, options.map(o=> Option(o)));
+				, elements);
 		}
 	}
 
