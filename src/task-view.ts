@@ -11,8 +11,6 @@ import { iViewModel, Val, V } from './vm-base';
 
 
 export function TaskView(task:iViewModel<iTask>){
-
-	debugger;
 	
 	var desc=  task.getValue(x=> x.account ).with(x=> x.description).orElse("?");
 	
