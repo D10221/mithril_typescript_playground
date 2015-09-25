@@ -30,7 +30,8 @@ enum InputTypes{
 interface iInputOptions
 {
 	value: any ;
-	type?: InputTypes ;	
+	type?: InputTypes ;
+    readonly?:boolean;
 }
 
 export function NumberInput(options:iInputOptions){
@@ -38,7 +39,8 @@ export function NumberInput(options:iInputOptions){
 }
 
 export function TextInput(options:iInputOptions){
-	return m('input', {style:"margin: 10px", value: options.value, type: 'text'});
+    options.type = InputTypes.text;
+	return Input(options);
 }
 
 export function DateInput(options:iInputOptions){
@@ -57,7 +59,7 @@ export function Span(options){
 	return m('span',{style: "margin: 10px"}, options.content);
 }
 
-interface iOption {
+export interface iOption {
 	value: any;
 	text: string;
 	selected: boolean;
@@ -72,7 +74,8 @@ export class Selector {
 	
 	onChange = new Subject<iOption>();
 
-	
+	render():MithrilVirtualElement{	return null;}
+
 	constructor( id: string, options: iOption[]) 
 	{		
 		
@@ -93,9 +96,5 @@ export class Selector {
 				, options.map(o=> Option(o)));
 		}
 	}
-	
-	
-	render():MithrilVirtualElement{
-		return null;
-	}
+
 }

@@ -6,10 +6,11 @@ shell.ls('-R', 'test/*.ts').forEach(function(f) {
 	files = files + " "+ f;  
 }, this);
 
-var r = shell.exec("tsc --module commonjs " + files );
+var r = shell.exec("tsc --module commonjs --target es5 --sourceMap " + files );
 
 if(r.code && r.output){
 	shell.echo(r.output)
 }
+
 
 shell.exit(r.code);

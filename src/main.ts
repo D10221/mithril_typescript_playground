@@ -1,39 +1,48 @@
 
 var m = <MithrilStatic>require('mithril');
-import {iAccount,iTask } from './entities' ; 
+import { iAccount,iTask } from './entities' ;
 import { Div, Link, Button, NumberInput, DateInput,TimeInput, TextInput, Span} from './tags';
 import { TaskController} from './task-controller' ; 
-import {TaskView } from './task-view' ; 
+import { TaskView } from './task-view' ;
+import { TaskViewModel } from './task-viewmodel';
 
-class AppModule implements MithrilModule {	
-			
-	constructor(){
-		
-		var controller = new TaskController();
-		
-		this.controller = ()=>  controller; 
-		
-		this.view = (ctrl)=> {
-			
-		var tasks = ctrl._tasks.map(task => TaskView(task));
-		
-		return Div(
+var taskController = new TaskController();
 
-			Div(...tasks),
+class AppController {
 
-			NumberInput({ value: ctrl._task }),
+    taskController:TaskController;
 
-			DateInput({ value: '1969-11-11' }),
+    constructor() {
 
-			Button({ content: "Rotate links", click: ctrl.rotate })
-			
-			);
-		}
-	}
-		
-	controller: Function  ;
+        this.taskController = taskController;
+    }
+}
 
-	view(ctrl:TaskController) { return null; }
+var appController = new AppController();
+
+class AppModule implements MithrilModule {
+
+    constructor() {
+        this.controller.bind(this);
+        this.view.bind(this);
+    }
+
+	controller(){
+        return appController;
+    }
+
+	view(appController:AppController) {
+
+        var tasks = appController
+            .taskController
+            ._tasks
+            .map(task=> new TaskViewModel(task))
+            .map(task => TaskView(task));
+
+        return Div(
+            Div(...tasks)
+        );
+    }
 }
 
 //initialize

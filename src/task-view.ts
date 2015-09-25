@@ -1,65 +1,36 @@
 var m = <MithrilStatic>require('mithril');
 
+import { Div, Link, Button, NumberInput, DateInput,TimeInput, TextInput, Span, Selector, Option, iOption} from './tags';
+
 import {iAccount, iTask } from './entities';
 
-import { Div, Link, Button, NumberInput, DateInput,TimeInput, TextInput, Span, Selector, Option} from './tags';
+import AccountSelector from './account-selector';
 
-import { AccountController } from './account-controller';
+import { iViewModel, Val, V } from './vm-base';
 
-import { Observable as O } from 'rx';
- 
-var accountController = new AccountController();
 
-class TaskViewModel{
-	
-	_task:iTask;
-	
-	get id (){ return this._task.id ; }
-	
-	get date(){return this._task.date;}
-	
-	set date(value:string ) { this._task.date = value ; }
-	
-	get tile() {return this._task.title ; }
-	
-	set title(value:string ){ this._task.title = value ; }
-	
-	constructor(task:iTask){
-		this._task = task;
-		
-	}
-}
 
-export function TaskView(task:iTask){
+export function TaskView(task:iViewModel<iTask>){
+
+	debugger;
 	
-	var vm = new TaskViewModel(task);
-			
-	var accountSelector = new Selector("account-selector", accountController.accounts.map(account=> {
-				return { 
-					value: account.id, 
-					text: account.name, 
-					selected: account.id === task.account.id }
-			}));
-			
-	accountSelector.onChange.subscribe(account=>{
-		
-		task.account = accountController.accounts.filter(a=> a.id === account.value )[0];
-		
-		alert(JSON.stringify(task));
-	});
+	var desc=  task.getValue(x=> x.account ).with(x=> x.description).orElse("?");
 	
 	return Div(
 		
-		DateInput({  value: task.date  }),
+		DateInput({  value: task.value(x=>x.date)  }),
 		
-		TimeInput({  value: task.start }),
+		TimeInput({  value: task.value(x=>x.start) }),
 		
-		TimeInput({  value: task.end }),
+		TimeInput({  value: task.value(x=>x.end) }),
+
+        AccountSelector(task),
+
+        TextInput({ value: desc, readonly: true}),
 		
-		accountSelector.render(),
-		
-		TextInput ({value: task.description }), 
+		TextInput ({value: task.value(x=>x.description) }),
 						 
-		Link({ href: `#/tasks/task/${vm.id}`, content: vm.title })
+		Link({ href: `#/tasks/task/${task.getValue(x=>x.id)}`, content: task.getValue(x=>x.title) })
 	)
 }
+
