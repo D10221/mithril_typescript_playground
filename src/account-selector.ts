@@ -8,14 +8,15 @@ import { Observable, IObservable , IDisposable} from 'rx';
 
 var accountController = new AccountController();
 
-interface iAccoutnSelection
+export interface iAccountSelector
 {
     selectionChanged : IObservable<iAccount> ;
     vElement: MithrilVirtualElement;
     unloaded: IObservable<boolean>;
 
 }
-export default function AccountSelector(task:iViewModel<iTask>) : iAccoutnSelection
+
+export  function AccountSelectorFactory(task:iViewModel<iTask>) : iAccountSelector
 {
 
     var toOption  = function(task:iViewModel<iTask>, account:iAccount): iOption {
@@ -27,6 +28,8 @@ export default function AccountSelector(task:iViewModel<iTask>) : iAccoutnSelect
         return option;
     }
 
+   //console.log(JSON.stringify(  accountController.accounts));
+        
     var accounts = accountController
         .accounts
         .map(account=> toOption(task,account));
