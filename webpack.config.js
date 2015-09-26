@@ -5,6 +5,7 @@ module.exports = {
         filename: "built/bundle.js"
     },
     devtool: "source-map",
+    debug:true,
     module: {
         loaders: [			
             { test: /\.css$/, loader: "style!css" },
