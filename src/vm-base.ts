@@ -1,5 +1,6 @@
 import {Subject, Observable } from 'rx';
-import {V, Val, isEmpty } from "./val";
+import {V, Val } from "./val";
+import {isEmpty} from './m-tools';
 
 export interface iViewModel<T>{
     withValue<TR>(func:(x:T)=> TR):Val<TR>;

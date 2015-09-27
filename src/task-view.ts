@@ -7,7 +7,8 @@ import { iViewModel} from './vm-base';
 import { Observable, IObservable} from "rx";
 import { TaskViewModel } from './task-viewmodel';
 import { VmBase} from './vm-base';
-import { iView , iViewContext ,ViewStates} from "./iview";
+import { iView } from "./iview";
+import { iViewContext ,ViewStates } from './view-context';
 
 export class TaskView implements iView {
 	
@@ -65,16 +66,14 @@ export class TaskView implements iView {
 			}
 		}	
 		
-		var state = viewContext.getViewSTate(this);
+		var state = viewContext.getViewState(this);
 		if(state){
 			vm.isActive = state.state === ViewStates.active;
 			console.log(`restored state id:${this.identity()}, active:${vm.isActive}`);			
 		}
 		
 		this.view = () => {
-			if (vm.isActive) {
-				
-				console.log(`return Active View id:${vm.identity()}`);
+			if (vm.isActive) {							
 				
 				return m('div', {config:configure}
 					,[
@@ -93,8 +92,7 @@ export class TaskView implements iView {
 						Link({ href: `#/tasks/task/${vm.withValue(x=> x.id) }`, content: vm.withValue(x=> x.title) })
 					]
 				);
-			}
-			console.log(`return No Active View id:${vm.identity()}`);
+			}	
 			return  m('div', { config: configure }, vm.toJson(false));
 		}
 		

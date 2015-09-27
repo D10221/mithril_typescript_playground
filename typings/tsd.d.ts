@@ -4,5 +4,6 @@
 /// <reference path="webpack.require.d.ts" />
 /// <reference path="../node_modules/rx/ts/rx.all.d.ts" />
 /// <reference path="lodash/lodash.d.ts" />
+/// <reference path="storejs/storejs.d.ts" />
 
 

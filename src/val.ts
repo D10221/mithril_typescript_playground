@@ -1,4 +1,5 @@
 
+import {isEmpty} from './m-tools';
 
 function then<T,TR>(out:Val<T> ,convert:(t:T) => TR ): Val<TR> {
     return V.create(
@@ -33,6 +34,3 @@ export interface Val<T>{
      orElse: (x:T)=> T;
 }
 
-export function isEmpty(value){
-    return (typeof value === "undefined" || value === null);
-}
