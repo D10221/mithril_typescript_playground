@@ -5,9 +5,11 @@ import { Div, Link, Button, NumberInput, DateInput,TimeInput, TextInput, Span} f
 import { TaskController} from './task-controller' ; 
 import { TaskView } from './task-view' ;
 import { TaskViewModel } from './task-viewmodel';
-import {iView, iViewContext,ViewContext } from './iview';
+import {iView } from './iview'; 
+import { iViewContext,ViewContext } from './view-context';
 import { IDisposable} from 'rx';
 import * as _ from 'lodash';
+import { disposeThem , compute } from './m-tools';
 
 var taskController = new TaskController();
 
@@ -23,16 +25,6 @@ class AppController {
 
 var appController = new AppController();
 
-function disposeThem(subscriptions:IDisposable[]){
-        if(subscriptions) subscriptions.forEach(s=>{if(s)s.dispose();});
-}
-
-function compute(f:()=>void){
-    m.startComputation();
-    f();
-    m.endComputation();
-}
-
 function toggleViews(views:iView[],active:iView){
     views
    .filter(v=> v!= active)
@@ -43,12 +35,7 @@ class AppModule implements MithrilModule {
     
     viewContext : iViewContext = new ViewContext();
     
-    constructor() {
-        this.controller.bind(this);
-        this.view.bind(this);
-    }
-
-	controller(){
+    controller(){
         return appController;
     }        
     
@@ -64,11 +51,13 @@ class AppModule implements MithrilModule {
             
         var tasks = taskViews
             .map(iView=> {                
-                 subscriptions.push(
+                 
+                 subscriptions.push(                 
                  iView
                  .activeChanged
-                 .where(e=>e)
-                 .subscribe(value=> toggleViews(taskViews,iView)));                       
+                 .where(e=>e)                 
+                 .subscribe(activated=> toggleViews(taskViews,iView))                 
+                 );//**                       
                 
                 return iView.view();
                 });
